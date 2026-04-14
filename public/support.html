@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support — MeetSense</title>
+<link rel="stylesheet" href="/style.css">
+<style>
+.support-page{max-width:760px;margin:0 auto;padding:80px 48px}
+.support-hero{margin-bottom:48px}
+.support-hero h1{font-size:38px;margin-bottom:10px}
+.support-hero p{font-size:15px;color:var(--text2);line-height:1.7}
+.support-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:48px}
+.help-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px}
+.help-card h3{font-size:15px;font-weight:600;margin-bottom:8px}
+.help-card p{font-size:13px;color:var(--text2);margin-bottom:14px;line-height:1.6}
+.help-card a{font-size:13px;color:var(--gold);text-decoration:none}
+.help-card a:hover{text-decoration:underline}
+.chat-section{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.chat-head{padding:20px 24px;border-bottom:1px solid var(--border)}
+.chat-head h2{font-size:18px;margin-bottom:4px}
+.chat-head p{font-size:13px;color:var(--text3)}
+.chat-body{padding:24px}
+.form-row{margin-bottom:18px}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.char-count{font-size:11px;color:var(--text3);text-align:right;margin-top:4px}
+.send-btn{width:100%;padding:14px;font-size:15px;justify-content:center}
+.success-msg{display:none;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:8px;padding:16px 20px;font-size:14px;color:var(--green);margin-top:16px}
+.success-msg.show{display:block}
+@media(max-width:768px){
+  .support-page{padding:48px 24px}
+  .support-grid{grid-template-columns:1fr}
+  .form-2col{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="logo">Meet<em>Sense</em></a>
+  <div class="nav-links">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/pricing">Pricing</a>
+    <a href="https://github.com/vishwajit7799/Meetsense" target="_blank">GitHub</a>
+  </div>
+</nav>
+
+<div class="support-page">
+  <div class="support-hero">
+    <p class="section-label" style="font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px">Support</p>
+    <h1>How can we help?</h1>
+    <p>Get in touch and we'll respond within 24 hours. For urgent issues, check the GitHub issues page first — your problem may already be solved.</p>
+  </div>
+
+  <div class="support-grid">
+    <div class="help-card">
+      <h3>📖 Documentation</h3>
+      <p>Setup guides, troubleshooting, and how the bot works under the hood.</p>
+      <a href="https://github.com/vishwajit7799/Meetsense#readme" target="_blank">Read the README →</a>
+    </div>
+    <div class="help-card">
+      <h3>🐛 Bug reports</h3>
+      <p>Found something broken? Open an issue on GitHub with steps to reproduce.</p>
+      <a href="https://github.com/vishwajit7799/Meetsense/issues" target="_blank">Open an issue →</a>
+    </div>
+    <div class="help-card">
+      <h3>💳 Billing issues</h3>
+      <p>Payment failed, subscription not activating, or need a refund? Mention it below.</p>
+      <a href="#contact">Contact us →</a>
+    </div>
+    <div class="help-card">
+      <h3>🤖 Bot not joining</h3>
+      <p>Common causes: meeting link not in calendar, anonymous join disabled, or meeting already started.</p>
+      <a href="https://github.com/vishwajit7799/Meetsense#troubleshooting" target="_blank">Troubleshoot →</a>
+    </div>
+  </div>
+
+  <div class="chat-section" id="contact">
+    <div class="chat-head">
+      <h2>Send us a message</h2>
+      <p>We'll reply to your email within 24 hours.</p>
+    </div>
+    <div class="chat-body">
+      <div class="form-2col">
+        <div class="form-row">
+          <label>Your name</label>
+          <input class="input" id="sName" type="text" placeholder="Vishwajit" maxlength="100">
+        </div>
+        <div class="form-row">
+          <label>Email address</label>
+          <input class="input" id="sEmail" type="email" placeholder="you@gmail.com" maxlength="200">
+        </div>
+      </div>
+      <div class="form-row">
+        <label>Subject</label>
+        <input class="input" id="sSubject" type="text" placeholder="Bot not joining my Teams meeting" maxlength="200">
+      </div>
+      <div class="form-row">
+        <label>Message</label>
+        <textarea class="input" id="sMessage" placeholder="Describe your issue in detail. Include meeting platform (Teams/Zoom/Meet), what you expected, and what happened instead." maxlength="2000" oninput="document.getElementById('charCount').textContent=this.value.length+'/2000'"></textarea>
+        <div class="char-count" id="charCount">0/2000</div>
+      </div>
+      <button class="btn btn-gold send-btn" id="sendBtn" onclick="sendMessage()">Send message</button>
+      <div class="success-msg" id="successMsg">
+        ✅ Message sent! We'll reply to your email within 24 hours.
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <a href="/" class="logo">Meet<em style="color:var(--gold);font-style:normal">Sense</em></a>
+  <div class="footer-links">
+    <a href="/pricing">Pricing</a>
+    <a href="https://github.com/vishwajit7799/Meetsense">GitHub</a>
+  </div>
+  <p>© 2026 MeetSense</p>
+</footer>
+
+<script>
+async function sendMessage(){
+  const name=document.getElementById('sName').value.trim();
+  const email=document.getElementById('sEmail').value.trim();
+  const subject=document.getElementById('sSubject').value.trim();
+  const message=document.getElementById('sMessage').value.trim();
+
+  if(!name||!email||!message){alert('Please fill in your name, email, and message.');return;}
+
+  const btn=document.getElementById('sendBtn');
+  btn.textContent='Sending...';
+  btn.disabled=true;
+
+  try{
+    const r=await fetch('/api/support',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,email,message:`Subject: ${subject}\n\n${message}`})
+    });
+    if(r.ok){
+      document.getElementById('successMsg').classList.add('show');
+      document.getElementById('sName').value='';
+      document.getElementById('sEmail').value='';
+      document.getElementById('sSubject').value='';
+      document.getElementById('sMessage').value='';
+      document.getElementById('charCount').textContent='0/2000';
+      btn.style.display='none';
+    } else {
+      alert('Failed to send. Please try again or email us directly.');
+      btn.textContent='Send message';
+      btn.disabled=false;
+    }
+  }catch(e){
+    alert('Error sending message. Please try again.');
+    btn.textContent='Send message';
+    btn.disabled=false;
+  }
+}
+</script>
+</body>
+</html>

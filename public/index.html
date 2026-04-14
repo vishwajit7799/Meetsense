@@ -4,194 +4,196 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MeetSense — AI Meeting Notes, Automatically</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --ink: #0a0a0f;
-    --ink2: #3d3d4e;
-    --ink3: #8888a0;
-    --paper: #fafaf8;
-    --surface: #f2f2ef;
-    --accent: #4f46e5;
-    --accent2: #7c3aed;
-    --green: #16a34a;
-    --border: #e2e2dc;
-  }
-  html { scroll-behavior: smooth; }
-  body { font-family: 'DM Sans', sans-serif; background: var(--paper); color: var(--ink); line-height: 1.6; }
-
-  /* NAV */
-  nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 40px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--paper); z-index: 10; }
-  .logo { font-family: 'Instrument Serif', serif; font-size: 22px; color: var(--ink); text-decoration: none; }
-  .logo span { color: var(--accent); }
-  .nav-links { display: flex; gap: 24px; align-items: center; }
-  .nav-links a { color: var(--ink2); text-decoration: none; font-size: 14px; font-weight: 400; }
-  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; border: none; transition: all .15s; }
-  .btn-primary { background: var(--accent); color: white; }
-  .btn-primary:hover { background: #4338ca; transform: translateY(-1px); }
-  .btn-outline { background: transparent; color: var(--ink); border: 1px solid var(--border); }
-  .btn-outline:hover { border-color: var(--ink3); }
-
-  /* HERO */
-  .hero { max-width: 760px; margin: 0 auto; padding: 100px 40px 80px; text-align: center; }
-  .tag { display: inline-flex; align-items: center; gap: 6px; background: #ede9fe; color: var(--accent2); font-size: 12px; font-weight: 500; padding: 4px 12px; border-radius: 20px; margin-bottom: 28px; }
-  .tag::before { content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
-  h1 { font-family: 'Instrument Serif', serif; font-size: clamp(40px, 7vw, 68px); line-height: 1.1; letter-spacing: -1px; margin-bottom: 24px; }
-  h1 em { font-style: italic; color: var(--accent); }
-  .hero-sub { font-size: 18px; color: var(--ink2); max-width: 520px; margin: 0 auto 40px; font-weight: 300; line-height: 1.7; }
-  .cta-group { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-  .btn-hero { padding: 14px 28px; font-size: 15px; border-radius: 10px; }
-  .ms-icon { width: 18px; height: 18px; }
-
-  /* HOW IT WORKS */
-  .section { padding: 80px 40px; max-width: 900px; margin: 0 auto; }
-  .section-label { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 2px; color: var(--ink3); margin-bottom: 12px; }
-  h2 { font-family: 'Instrument Serif', serif; font-size: clamp(28px, 4vw, 40px); margin-bottom: 48px; }
-  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
-  .step { background: var(--surface); border-radius: 12px; padding: 28px; border: 1px solid var(--border); position: relative; }
-  .step-num { width: 32px; height: 32px; background: var(--accent); color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; margin-bottom: 16px; }
-  .step h3 { font-size: 16px; font-weight: 500; margin-bottom: 8px; }
-  .step p { font-size: 14px; color: var(--ink2); line-height: 1.6; }
-
-  /* FEATURES */
-  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-  .feature { padding: 24px; border: 1px solid var(--border); border-radius: 12px; }
-  .feature-icon { font-size: 24px; margin-bottom: 12px; }
-  .feature h3 { font-size: 15px; font-weight: 500; margin-bottom: 6px; }
-  .feature p { font-size: 13px; color: var(--ink2); line-height: 1.6; }
-
-  /* SAMPLE EMAIL */
-  .email-preview { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; max-width: 560px; margin: 0 auto; box-shadow: 0 8px 32px rgba(0,0,0,.06); }
-  .email-header { background: #0f172a; padding: 20px 24px; }
-  .email-header h4 { color: white; font-size: 16px; font-weight: 600; }
-  .email-header p { color: #94a3b8; font-size: 13px; margin-top: 4px; }
-  .email-body { padding: 24px; font-size: 14px; }
-  .email-body .meta { background: #f8fafc; border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; color: #475569; line-height: 1.8; font-size: 13px; }
-  .email-body h5 { font-size: 13px; font-weight: 600; color: #0f172a; margin: 16px 0 8px; border-left: 3px solid #6366f1; padding-left: 8px; }
-  .email-body ul { padding-left: 16px; color: #334155; }
-  .email-body li { font-size: 13px; margin-bottom: 4px; line-height: 1.6; }
-
-  /* FOOTER */
-  footer { border-top: 1px solid var(--border); padding: 32px 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap; }
-  footer p { font-size: 13px; color: var(--ink3); }
-  footer a { color: var(--accent); text-decoration: none; font-size: 13px; }
-
-  @media (max-width: 600px) {
-    nav { padding: 16px 20px; }
-    .hero { padding: 60px 20px; }
-    .section { padding: 60px 20px; }
-    footer { flex-direction: column; gap: 12px; text-align: center; padding: 24px 20px; }
-  }
+.hero{max-width:860px;margin:0 auto;padding:120px 48px 100px;text-align:center}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:var(--gold-bg);border:1px solid var(--gold-border);color:var(--gold);font-size:12px;font-weight:500;padding:6px 16px;border-radius:20px;margin-bottom:32px;letter-spacing:.5px}
+.hero-tag::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+h1{font-size:clamp(44px,7vw,78px);line-height:1.05;letter-spacing:-2px;margin-bottom:24px}
+h1 em{color:var(--gold);font-style:italic}
+.hero-sub{font-size:18px;color:var(--text2);max-width:540px;margin:0 auto 48px;font-weight:300;line-height:1.7}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-lg{padding:14px 32px;font-size:15px;border-radius:8px}
+.ms-icon{width:18px;height:18px;flex-shrink:0}
+.works-with{padding:32px 48px;text-align:center;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.works-with p{font-size:11px;color:var(--text3);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px}
+.pill-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.pill{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:7px 16px;font-size:12px;color:var(--text3);font-weight:500}
+.section{padding:96px 48px;max-width:1100px;margin:0 auto}
+.section-label{font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px}
+.section h2{font-size:clamp(28px,4vw,42px);margin-bottom:12px}
+.section-sub{font-size:15px;color:var(--text2);margin-bottom:56px;max-width:480px}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
+.step{background:var(--bg);padding:36px 28px}
+.step-n{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--gold);letter-spacing:2px;margin-bottom:18px}
+.step h3{font-size:17px;margin-bottom:10px}
+.step p{font-size:13px;color:var(--text2);line-height:1.7}
+.preview-wrap{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.preview-inner{max-width:1100px;margin:0 auto;padding:96px 48px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.preview-text h2{margin-bottom:14px}
+.preview-text p{color:var(--text2);font-size:14px;line-height:1.8;margin-bottom:28px}
+.email-mock{background:var(--bg3);border:1px solid var(--border2);border-radius:12px;overflow:hidden}
+.em-head{background:#050505;padding:18px 22px;border-bottom:1px solid var(--border)}
+.em-head h4{font-size:14px;font-weight:700;color:#fff}
+.em-head p{font-size:11px;color:var(--text3);margin-top:3px}
+.em-badge{display:inline-block;background:var(--gold-bg);color:var(--gold);font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;border:1px solid var(--gold-border);margin-left:6px}
+.em-body{padding:20px 22px;font-size:12px}
+.em-meta{background:var(--bg4);border-radius:6px;padding:10px 14px;margin-bottom:14px;color:var(--text2);line-height:1.9}
+.em-sec{font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px;padding-left:8px;border-left:2px solid var(--gold)}
+.em-body ul{padding-left:14px;color:var(--text2)}
+.em-body li{margin-bottom:5px;line-height:1.6}
+.em-body li strong{color:var(--text)}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1px;background:var(--border);border:1px solid var(--border)}
+.feat{background:var(--bg);padding:32px 28px}
+.feat-icon{width:36px;height:36px;background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;margin-bottom:14px}
+.feat h3{font-size:15px;margin-bottom:8px}
+.feat p{font-size:13px;color:var(--text2);line-height:1.7}
+.price-section{background:var(--bg2);border-top:1px solid var(--border);padding:96px 48px;text-align:center}
+.price-card{display:inline-block;background:var(--bg3);border:1px solid var(--gold);border-radius:16px;padding:48px 56px;margin-top:48px;text-align:left}
+.price-num{font-family:'Syne',sans-serif;font-size:52px;font-weight:800;color:#fff;line-height:1}
+.price-num span{font-size:20px;color:var(--text2);font-weight:400}
+.price-per{color:var(--text2);font-size:13px;margin:6px 0 28px}
+.price-list{list-style:none;margin-bottom:32px}
+.price-list li{font-size:13px;color:var(--text2);padding:5px 0;display:flex;gap:10px;align-items:center}
+.price-list li::before{content:'✓';color:var(--gold);font-weight:700;flex-shrink:0}
+@media(max-width:768px){
+  .hero{padding:80px 24px}
+  .section{padding:64px 24px}
+  .preview-inner{grid-template-columns:1fr;gap:40px;padding:64px 24px}
+  .price-section{padding:64px 24px}
+  .works-with{padding:24px}
+}
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="/" class="logo">Meet<span>Sense</span></a>
+<nav class="nav">
+  <a href="/" class="logo">Meet<em>Sense</em></a>
   <div class="nav-links">
     <a href="#how">How it works</a>
-    <a href="https://github.com/yourusername/meetsense" target="_blank">GitHub</a>
-    <a href="/auth/login" class="btn btn-primary" style="padding:8px 16px;font-size:13px;">Connect calendar</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/support">Support</a>
+    <a href="https://github.com/vishwajit7799/Meetsense" target="_blank">GitHub</a>
+    <a href="/auth/google" class="btn btn-gold" style="padding:8px 18px;font-size:13px">Get started free</a>
   </div>
 </nav>
 
 <section class="hero">
-  <div class="tag">Open source &middot; Free forever</div>
+  <div class="hero-tag">Open source &middot; Free to self-host</div>
   <h1>Your meetings,<br><em>summarised</em> automatically</h1>
-  <p class="hero-sub">MeetSense joins your Teams, Zoom and Google Meet calls, takes notes, then emails you a clean summary — without you lifting a finger.</p>
-  <div class="cta-group">
-    <a href="/auth/login" class="btn btn-primary btn-hero">
-      <svg class="ms-icon" viewBox="0 0 21 21" fill="none"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
-      Connect Microsoft 365
+  <p class="hero-sub">MeetSense joins your Teams, Zoom and Google Meet calls, takes notes, and emails you a clean AI summary — without you lifting a finger.</p>
+  <div class="cta-row">
+    <a href="/auth/google" class="btn btn-gold btn-lg">
+      <svg class="ms-icon" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57C21.36 18.45 22.56 15.63 22.56 12.25z" fill="currentColor" opacity=".9"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="currentColor" opacity=".9"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="currentColor" opacity=".9"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="currentColor" opacity=".9"/></svg>
+      Continue with Google
     </a>
-    <a href="https://github.com/yourusername/meetsense" target="_blank" class="btn btn-outline btn-hero">View on GitHub</a>
+    <a href="/auth/microsoft" class="btn btn-outline btn-lg">
+      <svg class="ms-icon" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+      Continue with Microsoft
+    </a>
   </div>
 </section>
+
+<div class="works-with">
+  <p>Works with</p>
+  <div class="pill-row">
+    <div class="pill">Microsoft Teams</div>
+    <div class="pill">Google Meet</div>
+    <div class="pill">Zoom</div>
+    <div class="pill">Outlook Calendar</div>
+    <div class="pill">Google Calendar</div>
+  </div>
+</div>
 
 <section class="section" id="how">
   <p class="section-label">How it works</p>
-  <h2>Set up once, never think about it again</h2>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <h3>Connect your calendar</h3>
-      <p>Sign in with your Microsoft 365 account. MeetSense reads your Outlook calendar — nothing else.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <h3>Bot joins automatically</h3>
-      <p>Two minutes before each meeting, a bot joins via the meeting link. It shows up as "MeetSense Notetaker" in the participant list.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <h3>Notes land in your inbox</h3>
-      <p>Within 2 minutes of the meeting ending, a structured summary with action items arrives in your email.</p>
-    </div>
+  <h2>Set up once. Never think about it again.</h2>
+  <p class="section-sub">Four steps, five minutes, then fully automatic forever.</p>
+  <div class="steps-grid">
+    <div class="step"><div class="step-n">01</div><h3>Sign up</h3><p>Connect your Google or Microsoft account. No password to create. One click.</p></div>
+    <div class="step"><div class="step-n">02</div><h3>Subscribe</h3><p>₹100/month via UPI, card or netbanking. Cancel any time, no questions.</p></div>
+    <div class="step"><div class="step-n">03</div><h3>Connect calendar</h3><p>Google Calendar or Outlook. MeetSense reads your meetings — nothing else.</p></div>
+    <div class="step"><div class="step-n">04</div><h3>Done forever</h3><p>Bot joins your meetings automatically. Summary in your inbox within 2 minutes of ending.</p></div>
   </div>
 </section>
 
-<section class="section">
-  <p class="section-label">Sample output</p>
-  <h2>What you get after every meeting</h2>
-  <div class="email-preview">
-    <div class="email-header">
-      <h4>MeetSense &nbsp;<span style="background:#22c55e;color:white;font-size:11px;padding:2px 8px;border-radius:20px;">AI Notes</span></h4>
-      <p>Q1 QBR Review &middot; Tuesday, 14 April 2026</p>
+<div class="preview-wrap">
+  <div class="preview-inner">
+    <div class="preview-text">
+      <p class="section-label">Sample output</p>
+      <h2>What lands in your inbox</h2>
+      <p>Every summary includes key discussion points, decisions made, action items with owner names, and open questions — extracted automatically from the live transcript.</p>
+      <a href="/auth/google" class="btn btn-gold">Get your first summary →</a>
     </div>
-    <div class="email-body">
-      <div class="meta">
-        <strong>Duration:</strong> 47 min &nbsp; <strong>Attendees:</strong> Vishwajit, Priya, Rohan, Sneha
+    <div class="email-mock">
+      <div class="em-head">
+        <h4>MeetSense <span class="em-badge">AI Notes</span></h4>
+        <p>Q1 QBR Review &middot; Tuesday, 14 April 2026</p>
       </div>
-      <h5>Key discussion points</h5>
-      <ul>
-        <li>Ticket volume increased 23% YoY — top driver was onboarding issues</li>
-        <li>CSAT dipped to 82% in Q1 vs 87% in Q1 2025 for enterprise accounts</li>
-        <li>Silent accounts framework — 60-day threshold proposed and agreed</li>
-      </ul>
-      <h5>Decisions made</h5>
-      <ul>
-        <li>Silent account threshold set at 60 days no-ticket activity</li>
-        <li>QBR deck final version due April 18</li>
-      </ul>
-      <h5>Action items</h5>
-      <ul>
-        <li><strong>Vishwajit:</strong> Finalise silent accounts risk slide by Thursday</li>
-        <li><strong>Priya:</strong> Share raw CSAT data by EOD Wednesday</li>
-      </ul>
+      <div class="em-body">
+        <div class="em-meta"><strong>Duration:</strong> 47 min &nbsp; <strong>Attendees:</strong> Vishwajit, Priya, Rohan, Sneha</div>
+        <div class="em-sec">Key points</div>
+        <ul>
+          <li>Ticket volume up 23% YoY — onboarding the main driver</li>
+          <li>CSAT dipped to 82% vs 87% last Q1 for enterprise accounts</li>
+          <li>Silent accounts threshold set at 60 days</li>
+        </ul>
+        <div class="em-sec">Action items</div>
+        <ul>
+          <li><strong>Vishwajit:</strong> Finalise risk slide by Thursday</li>
+          <li><strong>Priya:</strong> Share CSAT raw data by EOD Wednesday</li>
+          <li><strong>Rohan:</strong> Update Zoho ticket tagging by Friday</li>
+        </ul>
+      </div>
     </div>
   </div>
-</section>
+</div>
 
 <section class="section">
   <p class="section-label">Features</p>
-  <h2>Everything you need, nothing you don't</h2>
-  <div class="features">
-    <div class="feature"><div class="feature-icon">📅</div><h3>Outlook calendar sync</h3><p>Connects to Microsoft 365. Detects Teams, Zoom and Google Meet links automatically.</p></div>
-    <div class="feature"><div class="feature-icon">🤖</div><h3>Headless bot</h3><p>Joins as a visible participant — ethical, transparent, no hidden recording.</p></div>
-    <div class="feature"><div class="feature-icon">✍️</div><h3>Live caption scraping</h3><p>Captures speaker names and dialogue in real time throughout the meeting.</p></div>
-    <div class="feature"><div class="feature-icon">🧠</div><h3>AI summarisation</h3><p>Powered by Gemini 2.0 Flash — free, fast, and accurate for structured notes.</p></div>
-    <div class="feature"><div class="feature-icon">📧</div><h3>Email delivery</h3><p>Clean HTML summary in your inbox within 2 minutes of the meeting ending.</p></div>
-    <div class="feature"><div class="feature-icon">🔓</div><h3>Fully open source</h3><p>MIT licensed. Self-host it, fork it, extend it. Your data stays yours.</p></div>
+  <h2>Everything included. Nothing to configure.</h2>
+  <div class="feat-grid" style="margin-top:48px">
+    <div class="feat"><div class="feat-icon">📅</div><h3>Dual calendar sync</h3><p>Connects to both Google Calendar and Outlook. Automatically detects Teams, Zoom and Meet links.</p></div>
+    <div class="feat"><div class="feat-icon">🤖</div><h3>Transparent bot</h3><p>Joins as a visible participant named "MeetSense Notetaker" — ethical, consent-aware, never hidden.</p></div>
+    <div class="feat"><div class="feat-icon">✍️</div><h3>Live transcription</h3><p>Captures speaker names and dialogue throughout the meeting via live captions in real time.</p></div>
+    <div class="feat"><div class="feat-icon">🧠</div><h3>Gemini AI</h3><p>Google Gemini 2.0 Flash generates structured notes — fast, accurate, and free to run.</p></div>
+    <div class="feat"><div class="feat-icon">📧</div><h3>Email delivery</h3><p>Summary in your inbox within 2 minutes of the meeting ending. No app to open.</p></div>
+    <div class="feat"><div class="feat-icon">🔓</div><h3>Open source</h3><p>MIT licensed. Self-host, fork, extend. Your data stays on your infrastructure.</p></div>
   </div>
 </section>
 
-<footer>
-  <p>MeetSense &mdash; open source AI meeting notes</p>
-  <div style="display:flex;gap:20px;flex-wrap:wrap;">
-    <a href="https://github.com/yourusername/meetsense">GitHub</a>
-    <a href="https://github.com/yourusername/meetsense/blob/main/README.md">Docs</a>
-    <a href="https://github.com/yourusername/meetsense/issues">Issues</a>
+<div class="price-section">
+  <p class="section-label">Pricing</p>
+  <h2>Simple, honest pricing</h2>
+  <div class="price-card">
+    <div class="price-num">₹100<span>/mo</span></div>
+    <p class="price-per">Per person &middot; Cancel anytime</p>
+    <ul class="price-list">
+      <li>Unlimited meetings</li>
+      <li>Google + Outlook calendar sync</li>
+      <li>Teams, Zoom and Google Meet</li>
+      <li>AI summaries via Gemini</li>
+      <li>Email delivery after every meeting</li>
+      <li>Full meeting history dashboard</li>
+    </ul>
+    <a href="/auth/google" class="btn btn-gold" style="width:100%;justify-content:center;padding:14px 0">Start now →</a>
   </div>
+</div>
+
+<footer class="footer">
+  <a href="/" class="logo">Meet<em style="color:var(--gold);font-style:normal">Sense</em></a>
+  <div class="footer-links">
+    <a href="https://github.com/vishwajit7799/Meetsense">GitHub</a>
+    <a href="/pricing">Pricing</a>
+    <a href="/support">Support</a>
+  </div>
+  <p>© 2026 MeetSense &middot; MIT License</p>
 </footer>
 
 <script>
-  const params = new URLSearchParams(location.search);
-  if (params.get('error')) {
-    alert('Authentication error: ' + params.get('error') + '\nPlease try again.');
-  }
+const p = new URLSearchParams(location.search);
+if (p.get('error')) alert('Sign in failed. Please try again.');
 </script>
 </body>
 </html>

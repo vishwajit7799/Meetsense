@@ -4,218 +4,224 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — MeetSense</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --ink: #0a0a0f; --ink2: #3d3d4e; --ink3: #8888a0;
-    --paper: #fafaf8; --surface: #f2f2ef; --accent: #4f46e5;
-    --border: #e2e2dc; --green: #16a34a; --amber: #d97706; --red: #dc2626;
-  }
-  body { font-family: 'DM Sans', sans-serif; background: var(--surface); color: var(--ink); min-height: 100vh; }
-  nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: var(--paper); border-bottom: 1px solid var(--border); }
-  .logo { font-family: 'Instrument Serif', serif; font-size: 20px; color: var(--ink); text-decoration: none; }
-  .logo span { color: var(--accent); }
-  .user-info { display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--ink2); }
-  .avatar { width: 32px; height: 32px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; font-weight: 500; }
-  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500; text-decoration: none; cursor: pointer; border: 1px solid var(--border); background: var(--paper); color: var(--ink2); transition: all .15s; }
-  .btn:hover { border-color: var(--ink3); }
-
-  .main { max-width: 960px; margin: 0 auto; padding: 32px; }
-  h1 { font-family: 'Instrument Serif', serif; font-size: 28px; margin-bottom: 4px; }
-  .subtitle { font-size: 14px; color: var(--ink3); margin-bottom: 32px; }
-
-  /* Stats */
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
-  .stat { background: var(--paper); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; }
-  .stat-num { font-family: 'Instrument Serif', serif; font-size: 36px; color: var(--ink); }
-  .stat-label { font-size: 13px; color: var(--ink3); margin-top: 2px; }
-
-  /* Meetings list */
-  .card { background: var(--paper); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-  .card-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .card-header h2 { font-size: 15px; font-weight: 500; }
-  .meeting-row { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; cursor: pointer; transition: background .1s; }
-  .meeting-row:last-child { border-bottom: none; }
-  .meeting-row:hover { background: var(--surface); }
-  .meeting-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--surface); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
-  .meeting-info { flex: 1; min-width: 0; }
-  .meeting-subject { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .meeting-meta { font-size: 12px; color: var(--ink3); margin-top: 2px; }
-  .badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 500; }
-  .badge-completed { background: #dcfce7; color: #15803d; }
-  .badge-pending   { background: #fef9c3; color: #a16207; }
-  .badge-joining   { background: #dbeafe; color: #1d4ed8; }
-  .badge-in_progress { background: #ede9fe; color: #6d28d9; }
-  .badge-failed    { background: #fee2e2; color: #b91c1c; }
-
-  /* Modal */
-  .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 100; align-items: center; justify-content: center; padding: 24px; }
-  .overlay.open { display: flex; }
-  .modal { background: var(--paper); border-radius: 16px; width: 100%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
-  .modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .modal-header h3 { font-size: 16px; font-weight: 500; }
-  .close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--ink3); padding: 4px; line-height: 1; }
-  .modal-body { padding: 24px; font-size: 14px; line-height: 1.7; }
-  .modal-body h5 { font-size: 13px; font-weight: 600; color: var(--ink); margin: 16px 0 8px; border-left: 3px solid var(--accent); padding-left: 8px; }
-  .modal-body ul { padding-left: 18px; color: var(--ink2); }
-  .modal-body li { margin-bottom: 4px; }
-  .modal-body .meta { background: var(--surface); border-radius: 8px; padding: 12px 16px; margin-bottom: 16px; color: var(--ink2); line-height: 1.8; font-size: 13px; }
-
-  .empty { padding: 48px; text-align: center; color: var(--ink3); }
-  .empty p { font-size: 14px; margin-top: 8px; }
-
-  @media (max-width: 600px) {
-    .main { padding: 20px; }
-    .stats { grid-template-columns: 1fr 1fr; }
-    nav { padding: 14px 20px; }
-  }
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:24px 0;position:sticky;top:0;height:100vh;overflow-y:auto}
+.sidebar-logo{padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.sidebar-logo a{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:#fff;text-decoration:none}
+.sidebar-logo a em{color:var(--gold);font-style:normal}
+.sidebar-nav a{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;color:var(--text2);text-decoration:none;transition:all .15s;border-left:2px solid transparent}
+.sidebar-nav a:hover{color:var(--text);background:var(--bg3)}
+.sidebar-nav a.active{color:var(--gold);border-left-color:var(--gold);background:var(--gold-bg)}
+.sidebar-nav .nav-icon{width:16px;text-align:center;font-size:14px}
+.sidebar-bottom{padding:16px 20px;border-top:1px solid var(--border);margin-top:auto}
+.user-pill{display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#000;flex-shrink:0;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.user-name{font-size:13px;font-weight:500;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.user-plan{font-size:11px;color:var(--text3)}
+.main{padding:32px 40px;overflow-y:auto}
+.page-title{font-size:22px;font-weight:700;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--text3);margin-bottom:32px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.meeting-row{display:flex;align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+.meeting-row:last-child{border-bottom:none}
+.meeting-row:hover{background:var(--bg3)}
+.meeting-platform{width:36px;height:36px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.meeting-info{flex:1;min-width:0}
+.meeting-title{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.meeting-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.sub-banner{background:var(--gold-bg);border:1px solid var(--gold-border);border-radius:10px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.sub-banner p{font-size:13px;color:var(--gold)}
+.sub-banner strong{color:#fff}
+.cal-section{margin-bottom:32px}
+.cal-section h3{font-size:14px;font-weight:600;margin-bottom:12px;color:var(--text)}
+.cal-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;margin-bottom:8px}
+.cal-info{flex:1}
+.cal-name{font-size:13px;font-weight:500;color:var(--text)}
+.cal-status{font-size:11px;color:var(--text3);margin-top:2px}
+/* Modal */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;padding:24px}
+.overlay.open{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border2);border-radius:16px;width:100%;max-width:580px;max-height:85vh;overflow-y:auto}
+.modal-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-head h3{font-size:15px;font-weight:600}
+.modal-close{background:none;border:none;color:var(--text3);font-size:22px;cursor:pointer;line-height:1;padding:2px 6px}
+.modal-close:hover{color:var(--text)}
+.modal-body{padding:24px}
+.summary-meta{background:var(--bg3);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:var(--text2);line-height:1.9}
+.summary-section{font-size:10px;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px;padding-left:8px;border-left:2px solid var(--gold)}
+.modal-body ul{padding-left:16px;color:var(--text2);font-size:13px}
+.modal-body li{margin-bottom:5px;line-height:1.6}
+.modal-body li strong{color:var(--text)}
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .main{padding:20px}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
-
-<nav>
-  <a href="/" class="logo">Meet<span>Sense</span></a>
-  <div class="user-info">
-    <div class="avatar" id="avatarEl">?</div>
-    <span id="userNameEl">Loading...</span>
-    <a href="#" class="btn" id="logoutBtn">Sign out</a>
-  </div>
-</nav>
-
-<main class="main">
-  <h1>Your meetings</h1>
-  <p class="subtitle" id="subtitleEl">Loading your account...</p>
-
-  <div class="stats">
-    <div class="stat"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Total meetings</div></div>
-    <div class="stat"><div class="stat-num" id="statCompleted">—</div><div class="stat-label">Summaries sent</div></div>
-    <div class="stat"><div class="stat-num" id="statUpcoming">—</div><div class="stat-label">Upcoming today</div></div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <h2>All meetings</h2>
-      <button class="btn" onclick="loadMeetings()">↻ Refresh</button>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><a href="/">Meet<em>Sense</em></a></div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="active"><span class="nav-icon">📋</span> Meetings</a>
+      <a href="/pricing"><span class="nav-icon">💳</span> Subscription</a>
+      <a href="/support"><span class="nav-icon">💬</span> Support</a>
+      <a href="https://github.com/vishwajit7799/Meetsense" target="_blank"><span class="nav-icon">⚡</span> GitHub</a>
+    </nav>
+    <div style="flex:1"></div>
+    <div class="sidebar-bottom">
+      <div class="user-pill">
+        <div class="avatar" id="avatarEl">?</div>
+        <div>
+          <div class="user-name" id="userNameEl">Loading...</div>
+          <div class="user-plan" id="userPlanEl">...</div>
+        </div>
+      </div>
+      <a href="/auth/logout" class="btn btn-ghost" style="margin-top:12px;width:100%;justify-content:center;font-size:12px">Sign out</a>
     </div>
-    <div id="meetingsList">
-      <div class="empty">
-        <div style="font-size:32px">📅</div>
-        <p>Loading meetings...</p>
+  </aside>
+
+  <main class="main">
+    <div class="page-title">Your meetings</div>
+    <div class="page-sub" id="pageSubEl">Loading your account...</div>
+
+    <div id="subBanner" style="display:none" class="sub-banner">
+      <p>You're on the <strong>free plan</strong>. Subscribe to activate the bot for your meetings.</p>
+      <a href="/pricing" class="btn btn-gold" style="padding:8px 18px;font-size:13px;flex-shrink:0">Subscribe — ₹100/mo</a>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="statTotal">—</div><div class="stat-label">Total meetings</div></div>
+      <div class="stat-card"><div class="stat-num" id="statDone">—</div><div class="stat-label">Summaries sent</div></div>
+      <div class="stat-card"><div class="stat-num" id="statUp">—</div><div class="stat-label">Upcoming today</div></div>
+    </div>
+
+    <div class="cal-section">
+      <h3>Connected calendars</h3>
+      <div class="cal-row" id="googleCal">
+        <span style="font-size:20px">📅</span>
+        <div class="cal-info">
+          <div class="cal-name">Google Calendar</div>
+          <div class="cal-status" id="googleCalStatus">Checking...</div>
+        </div>
+        <a href="/auth/google" class="btn btn-outline" style="padding:6px 14px;font-size:12px" id="googleCalBtn">Reconnect</a>
+      </div>
+      <div class="cal-row" id="msCal">
+        <svg width="20" height="20" viewBox="0 0 21 21"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg>
+        <div class="cal-info">
+          <div class="cal-name">Outlook Calendar</div>
+          <div class="cal-status" id="msCalStatus">Not connected</div>
+        </div>
+        <a href="/auth/microsoft" class="btn btn-outline" style="padding:6px 14px;font-size:12px" id="msCalBtn">Connect</a>
       </div>
     </div>
-  </div>
-</main>
+
+    <div class="card">
+      <div class="card-header">
+        <h3>All meetings</h3>
+        <button class="btn btn-ghost" style="font-size:12px" onclick="loadMeetings()">↻ Refresh</button>
+      </div>
+      <div id="meetingsList">
+        <div class="empty"><div class="empty-icon">📭</div><p>Loading meetings...</p></div>
+      </div>
+    </div>
+  </main>
+</div>
 
 <!-- Summary modal -->
-<div class="overlay" id="summaryOverlay" onclick="closeModal(event)">
+<div class="overlay" id="overlay" onclick="closeModal(event)">
   <div class="modal">
-    <div class="modal-header">
+    <div class="modal-head">
       <h3 id="modalTitle">Meeting summary</h3>
-      <button class="close-btn" onclick="document.getElementById('summaryOverlay').classList.remove('open')">×</button>
+      <button class="modal-close" onclick="document.getElementById('overlay').classList.remove('open')">×</button>
     </div>
     <div class="modal-body" id="modalBody"></div>
   </div>
 </div>
 
 <script>
-  const sid = new URLSearchParams(location.search).get('sid') || localStorage.getItem('ms_sid');
-  if (sid) localStorage.setItem('ms_sid', sid);
-  if (!sid) { location.href = '/'; }
+function platIcon(url=''){
+  if(url.includes('teams')) return '🔵';
+  if(url.includes('zoom'))  return '🟡';
+  if(url.includes('meet'))  return '🟢';
+  return '📹';
+}
+function fmtDate(d){return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}
+function badgeHtml(s){
+  const map={completed:'Summarised',pending:'Scheduled',joining:'Joining…',in_progress:'Live',failed:'Failed'};
+  return `<span class="badge badge-${s}">${map[s]||s}</span>`;
+}
 
-  const headers = { 'x-session-id': sid };
-
-  function platformIcon(url = '') {
-    if (url.includes('teams')) return '🔵';
-    if (url.includes('zoom'))  return '🟡';
-    if (url.includes('meet'))  return '🟢';
-    return '📹';
+async function loadUser(){
+  const r=await fetch('/api/me');
+  if(!r.ok){location.href='/';return;}
+  const u=await r.json();
+  document.getElementById('userNameEl').textContent=u.name||u.email;
+  document.getElementById('userPlanEl').textContent=u.subscription_status==='active'?'Active subscriber':'Free plan';
+  document.getElementById('avatarEl').innerHTML=u.avatar?`<img src="${u.avatar}">`:(u.name||u.email||'?')[0].toUpperCase();
+  document.getElementById('pageSubEl').textContent=`Signed in as ${u.email}`;
+  if(u.subscription_status!=='active') document.getElementById('subBanner').style.display='flex';
+  document.getElementById('googleCalStatus').textContent='Connected';
+  document.getElementById('googleCalBtn').textContent='Reconnect';
+  if(u.ms_connected){
+    document.getElementById('msCalStatus').textContent='Connected';
+    document.getElementById('msCalBtn').textContent='Reconnect';
   }
+}
 
-  function badgeHtml(status) {
-    const labels = { completed:'Summarised', pending:'Scheduled', joining:'Joining...', in_progress:'Live', failed:'Failed' };
-    return `<span class="badge badge-${status}">${labels[status] || status}</span>`;
+async function loadStats(){
+  const r=await fetch('/api/stats');
+  const s=await r.json();
+  document.getElementById('statTotal').textContent=s.total;
+  document.getElementById('statDone').textContent=s.completed;
+  document.getElementById('statUp').textContent=s.upcoming;
+}
+
+async function loadMeetings(){
+  const r=await fetch('/api/meetings');
+  const meetings=await r.json();
+  const el=document.getElementById('meetingsList');
+  if(!meetings.length){
+    el.innerHTML=`<div class="empty"><div class="empty-icon">📭</div><p>No meetings yet. MeetSense will pick up meetings from your connected calendar automatically.</p></div>`;
+    return;
   }
-
-  function fmtDate(d) {
-    return new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
-  }
-
-  async function loadUser() {
-    const res = await fetch('/api/me', { headers });
-    if (!res.ok) { location.href = '/'; return; }
-    const user = await res.json();
-    document.getElementById('userNameEl').textContent = user.name || user.email;
-    document.getElementById('avatarEl').textContent = (user.name || user.email || '?')[0].toUpperCase();
-    document.getElementById('subtitleEl').textContent = `Connected as ${user.email}`;
-    document.getElementById('logoutBtn').href = `/auth/logout?sid=${sid}`;
-  }
-
-  async function loadStats() {
-    const res = await fetch('/api/stats', { headers });
-    const s = await res.json();
-    document.getElementById('statTotal').textContent = s.total;
-    document.getElementById('statCompleted').textContent = s.completed;
-    document.getElementById('statUpcoming').textContent = s.upcoming;
-  }
-
-  async function loadMeetings() {
-    const res = await fetch('/api/meetings', { headers });
-    const meetings = await res.json();
-    const el = document.getElementById('meetingsList');
-
-    if (!meetings.length) {
-      el.innerHTML = `<div class="empty"><div style="font-size:32px">📭</div><p>No meetings yet. MeetSense will automatically pick up meetings from your Outlook calendar.</p></div>`;
-      return;
-    }
-
-    el.innerHTML = meetings.map(m => `
-      <div class="meeting-row" onclick="openSummary('${m.id}', \`${(m.subject||'').replace(/`/g,'')}\`)">
-        <div class="meeting-icon">${platformIcon(m.meeting_url)}</div>
-        <div class="meeting-info">
-          <div class="meeting-subject">${m.subject || 'Untitled meeting'}</div>
-          <div class="meeting-meta">${fmtDate(m.start_time)}</div>
-        </div>
-        ${badgeHtml(m.status)}
+  el.innerHTML=meetings.map(m=>`
+    <div class="meeting-row" onclick="openSummary('${m.id}','${(m.subject||'').replace(/'/g,'')}')">
+      <div class="meeting-platform">${platIcon(m.meeting_url||'')}</div>
+      <div class="meeting-info">
+        <div class="meeting-title">${m.subject||'Untitled meeting'}</div>
+        <div class="meeting-meta">${fmtDate(m.start_time)}</div>
       </div>
-    `).join('');
+      ${badgeHtml(m.status)}
+    </div>`).join('');
+}
+
+async function openSummary(id,title){
+  document.getElementById('modalTitle').textContent=title||'Meeting summary';
+  document.getElementById('modalBody').innerHTML='<p style="color:var(--text3);font-size:13px">Loading...</p>';
+  document.getElementById('overlay').classList.add('open');
+  const r=await fetch(`/api/meetings/${id}`);
+  const m=await r.json();
+  if(m.summary){
+    document.getElementById('modalBody').innerHTML=m.summary;
+  } else {
+    const msgs={pending:'Bot is scheduled to join this meeting.',in_progress:'Meeting is in progress — summary arrives by email when it ends.',failed:'The bot encountered an issue with this meeting.',joining:'Bot is currently joining the meeting.'};
+    document.getElementById('modalBody').innerHTML=`<p style="color:var(--text2);font-size:13px"><strong>Status:</strong> ${m.status}</p><p style="color:var(--text3);font-size:12px;margin-top:8px">${msgs[m.status]||'Processing...'}</p>`;
   }
+}
 
-  async function openSummary(id, title) {
-    document.getElementById('modalTitle').textContent = title || 'Meeting summary';
-    document.getElementById('modalBody').innerHTML = '<p style="color:var(--ink3)">Loading...</p>';
-    document.getElementById('summaryOverlay').classList.add('open');
+function closeModal(e){if(e.target===document.getElementById('overlay'))document.getElementById('overlay').classList.remove('open')}
 
-    const res = await fetch(`/api/meetings/${id}`, { headers });
-    const m = await res.json();
-
-    if (m.summary) {
-      document.getElementById('modalBody').innerHTML = m.summary;
-    } else if (m.status === 'completed') {
-      document.getElementById('modalBody').innerHTML = '<p>Summary not available.</p>';
-    } else {
-      document.getElementById('modalBody').innerHTML = `
-        <p style="color:var(--ink2)">Status: <strong>${m.status}</strong></p>
-        <p style="color:var(--ink3);margin-top:8px;font-size:13px;">
-          ${m.status === 'pending' ? 'The bot is scheduled to join this meeting.' :
-            m.status === 'in_progress' ? 'Meeting is in progress — summary will arrive by email when it ends.' :
-            m.status === 'failed' ? 'The bot encountered an issue with this meeting.' :
-            'Processing...'}
-        </p>`;
-    }
-  }
-
-  function closeModal(e) {
-    if (e.target === document.getElementById('summaryOverlay')) {
-      document.getElementById('summaryOverlay').classList.remove('open');
-    }
-  }
-
-  loadUser();
-  loadStats();
-  loadMeetings();
-  setInterval(loadMeetings, 30000); // auto-refresh every 30s
+loadUser();loadStats();loadMeetings();
+setInterval(loadMeetings,30000);
+const p=new URLSearchParams(location.search);
+if(p.get('ms')==='connected') alert('✅ Outlook calendar connected!');
+if(p.get('error')) alert('Error: '+p.get('error'));
 </script>
 </body>
 </html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — MeetSense</title>
+<link rel="stylesheet" href="/style.css">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+.pricing-page{max-width:960px;margin:0 auto;padding:80px 48px}
+.pricing-hero{text-align:center;margin-bottom:64px}
+.pricing-hero h1{font-size:42px;margin-bottom:12px}
+.pricing-hero p{font-size:16px;color:var(--text2);max-width:440px;margin:0 auto}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-bottom:64px}
+.plan{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:36px 32px;position:relative}
+.plan.featured{border-color:var(--gold);background:var(--bg3)}
+.plan-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gold);color:#000;font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;white-space:nowrap}
+.plan-name{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.plan-price{font-family:'Syne',sans-serif;font-size:48px;font-weight:800;color:#fff;line-height:1}
+.plan-price span{font-size:18px;color:var(--text2);font-weight:400}
+.plan-period{font-size:12px;color:var(--text3);margin:6px 0 24px}
+.plan-features{list-style:none;margin-bottom:28px}
+.plan-features li{font-size:13px;color:var(--text2);padding:6px 0;display:flex;gap:10px;align-items:flex-start;border-bottom:1px solid var(--border)}
+.plan-features li:last-child{border-bottom:none}
+.plan-features li::before{content:'✓';color:var(--gold);font-weight:700;flex-shrink:0;margin-top:1px}
+.plan-features li.no::before{content:'✗';color:var(--text3)}
+.plan-features li.no{color:var(--text3)}
+.faq{margin-top:64px}
+.faq h2{font-size:28px;margin-bottom:32px;text-align:center}
+.faq-item{border-bottom:1px solid var(--border);padding:20px 0}
+.faq-q{font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px}
+.faq-a{font-size:13px;color:var(--text2);line-height:1.7}
+@media(max-width:768px){.pricing-page{padding:48px 24px}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="logo">Meet<em>Sense</em></a>
+  <div class="nav-links">
+    <a href="/dashboard">Dashboard</a>
+    <a href="/support">Support</a>
+    <a href="https://github.com/vishwajit7799/Meetsense" target="_blank">GitHub</a>
+  </div>
+</nav>
+
+<div class="pricing-page">
+  <div class="pricing-hero">
+    <p class="section-label" style="font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:14px">Pricing</p>
+    <h1>Simple, honest pricing</h1>
+    <p>No hidden fees. No per-meeting charges. One flat monthly price that covers everything.</p>
+  </div>
+
+  <div class="plans">
+    <!-- Free -->
+    <div class="plan">
+      <div class="plan-name">Free</div>
+      <div class="plan-price">₹0<span>/mo</span></div>
+      <div class="plan-period">Forever free</div>
+      <ul class="plan-features">
+        <li>Google + Microsoft sign in</li>
+        <li>Connect Google Calendar</li>
+        <li>Connect Outlook Calendar</li>
+        <li class="no">Bot joins meetings</li>
+        <li class="no">AI summaries</li>
+        <li class="no">Email delivery</li>
+        <li class="no">Meeting history</li>
+      </ul>
+      <a href="/auth/google" class="btn btn-outline" style="width:100%;justify-content:center;padding:12px 0">Get started free</a>
+    </div>
+
+    <!-- Individual -->
+    <div class="plan featured">
+      <div class="plan-badge">Most popular</div>
+      <div class="plan-name">Individual</div>
+      <div class="plan-price">₹100<span>/mo</span></div>
+      <div class="plan-period">Per person &middot; Cancel anytime</div>
+      <ul class="plan-features">
+        <li>Google + Microsoft sign in</li>
+        <li>Google Calendar + Outlook sync</li>
+        <li>Teams, Zoom + Google Meet</li>
+        <li>Unlimited meeting notes</li>
+        <li>AI summaries via Gemini</li>
+        <li>Email delivery after every meeting</li>
+        <li>Full meeting history</li>
+      </ul>
+      <button class="btn btn-gold" id="subscribeBtn" style="width:100%;justify-content:center;padding:14px 0;font-size:15px" onclick="subscribe()">Subscribe now</button>
+      <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px">UPI / Card / Netbanking via Razorpay</p>
+    </div>
+  </div>
+
+  <div class="faq">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <div class="faq-q">Does the bot appear in the meeting?</div>
+      <div class="faq-a">Yes — the bot joins as a visible participant named "MeetSense Notetaker". All attendees can see it. We believe in transparent, consent-aware recording.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What meeting platforms are supported?</div>
+      <div class="faq-a">Microsoft Teams, Google Meet, and Zoom. The meeting link is detected automatically from your calendar event.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">How does billing work?</div>
+      <div class="faq-a">₹100 is charged monthly via Razorpay. You can pay via UPI (Google Pay, PhonePe, Paytm), debit card, credit card or netbanking. Auto-renews each month until cancelled.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Can I cancel anytime?</div>
+      <div class="faq-a">Yes. Cancel from your dashboard at any time. Your subscription stays active until the end of the billing period.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is my meeting data private?</div>
+      <div class="faq-a">Yes. Transcripts and summaries are stored only in your own database (Neon PostgreSQL). MeetSense is open source — you can verify exactly what happens to your data.</div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <a href="/" class="logo">Meet<em style="color:var(--gold);font-style:normal">Sense</em></a>
+  <div class="footer-links">
+    <a href="/support">Support</a>
+    <a href="https://github.com/vishwajit7799/Meetsense">GitHub</a>
+  </div>
+  <p>© 2026 MeetSense</p>
+</footer>
+
+<script>
+async function subscribe(){
+  const btn=document.getElementById('subscribeBtn');
+  btn.textContent='Creating subscription...';
+  btn.disabled=true;
+  try{
+    const r=await fetch('/api/subscribe',{method:'POST'});
+    if(r.status===401){location.href='/auth/google';return;}
+    const data=await r.json();
+    if(data.short_url){
+      window.location.href=data.short_url;
+    } else {
+      alert('Error creating subscription. Please try again.');
+      btn.textContent='Subscribe now';
+      btn.disabled=false;
+    }
+  }catch(e){
+    alert('Error: '+e.message);
+    btn.textContent='Subscribe now';
+    btn.disabled=false;
+  }
+}
+</script>
+</body>
+</html>
