@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check for .env file (security check)
+        run: |
+          if [ -f .env ]; then
+            echo "❌ ERROR: .env file found in repository! Remove it immediately."
+            exit 1
+          fi
+          echo "✅ No .env file found — safe to deploy"
+
+      - name: Verify required files exist
+        run: |
+          for f in src/server.js src/bot/runner.js src/calendar/watcher.js src/summarizer/gemini.js src/email/sender.js; do
+            [ -f "$f" ] && echo "✅ $f" || (echo "❌ Missing: $f" && exit 1)
+          done
+
+      - name: Check no hardcoded secrets
+        run: |
+          if grep -r "AIza\|sk-\|AKIA\|ghp_" src/ --include="*.js" -l 2>/dev/null; then
+            echo "❌ Possible hardcoded API key found!"
+            exit 1
+          fi
+          echo "✅ No hardcoded secrets detected"

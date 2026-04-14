@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: meetsense
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: MICROSOFT_CLIENT_ID
+        sync: false
+      - key: MICROSOFT_CLIENT_SECRET
+        sync: false
+      - key: MICROSOFT_TENANT_ID
+        value: common
+      - key: MICROSOFT_REDIRECT_URI
+        fromService:
+          type: web
+          name: meetsense
+          property: hostURL
+          path: /auth/callback
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: meetsense-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: BOT_NAME
+        value: MeetSense Notetaker
+
+databases:
+  - name: meetsense-db
+    plan: free

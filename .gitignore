@@ -1,0 +1,28 @@
+# ── Secrets — NEVER commit these ──
+.env
+.env.local
+.env.production
+*.pem
+*.key
+
+# ── Dependencies ──
+node_modules/
+.playwright/
+
+# ── Runtime data ──
+transcripts/
+recordings/
+*.log
+logs/
+
+# ── OS / Editor ──
+.DS_Store
+.DS_Store?
+Thumbs.db
+.vscode/settings.json
+.idea/
+
+# ── Build ──
+dist/
+.next/
+out/
