@@ -1,6 +1,5 @@
 FROM node:20-slim
 
-# Install Playwright dependencies
 RUN apt-get update && apt-get install -y \
     chromium \
     libnss3 \
@@ -15,21 +14,23 @@ RUN apt-get update && apt-get install -y \
     libxcomposite1 \
     libxext6 \
     fonts-liberation \
+    pulseaudio \
+    pulseaudio-utils \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 ENV PLAYWRIGHT_BROWSERS_PATH=/usr/bin
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV PULSE_RUNTIME_PATH=/tmp/pulse
 
 WORKDIR /app
 
 COPY package.json ./
 RUN npm install --omit=dev
-
-# Install Playwright browsers
 RUN npx playwright install chromium --with-deps
 
 COPY . .
 
 EXPOSE 3000
 
-CMD ["node", "src/server.js"]
+CMD pulseaudio --start --exit-idle-time=-1 --daemon --system=false 2>/dev/null || true && node src/server.js
