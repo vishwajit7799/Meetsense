@@ -154,49 +154,19 @@ async function joinZoomMeeting(page, url, meetingId) {
 
 async function waitForMeetingEnd(page, platform, maxMs) {
   const start = Date.now();
-
-  // Phase 1: Wait for meeting to actually start (up to 10 min)
-  // Don't check for end signals during this phase
-  console.log('   ⏳ Waiting for meeting to start...');
-  await page.waitForTimeout(30000); // always wait at least 30s before checking end
-
-  // Phase 2: Now poll for genuine end signals
-  console.log('   👂 Monitoring meeting...');
   while (Date.now() - start < maxMs) {
-    await page.waitForTimeout(20000); // check every 20 seconds
+    await page.waitForTimeout(15000);
     try {
-      const url = page.url();
-
-      if (platform === 'meet') {
-        // Only treat as ended if we see a definitive post-meeting URL
-        // NOT just about:blank or intermediate states
-        if (url.includes('lookingForSomething')) break;
-
-        // Check for "You've left the call" or "This meeting has ended" text
-        const leftMeeting = await page.evaluate(() => {
-          const body = document.body?.innerText || '';
-          return body.includes("You've left") ||
-                 body.includes("meeting has ended") ||
-                 body.includes("call has ended") ||
-                 body.includes("returned to home");
-        }).catch(() => false);
-        if (leftMeeting) break;
-      }
-
-      if (platform === 'teams') {
-        if (url.includes('thank-you') || url.includes('/end')) break;
-        const ended = await page.$('div:has-text("The meeting has ended")').catch(() => null);
-        if (ended) break;
-      }
-
-      if (platform === 'zoom') {
-        if (url.includes('postattendee') || url.includes('leavewebinar')) break;
-      }
-
-    } catch {
-      // Page closed or navigated away — meeting likely ended
-      break;
-    }
+      if (platform === 'meet' && (
+        page.url().includes('lookingForSomething') ||
+        page.url() === 'about:blank'
+      )) break;
+      if (platform === 'teams' && (
+        page.url().includes('thank-you') ||
+        page.url().includes('end')
+      )) break;
+      if (platform === 'zoom' && page.url().includes('postattendee')) break;
+    } catch { break; }
   }
 }
 
