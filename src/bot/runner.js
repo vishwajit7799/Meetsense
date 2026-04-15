@@ -42,15 +42,18 @@ export async function runBot(meeting) {
         '--disable-setuid-sandbox',
         '--disable-dev-shm-usage',
         '--disable-gpu',
-        '--alsa-output-device=pulse',
+        '--audio-output-channels=2',
+        '--disable-blink-features=AutomationControlled',
+        '--disable-infobars',
         '--use-fake-ui-for-media-stream',
-        '--use-fake-device-for-media-stream',
+        
         '--autoplay-policy=no-user-gesture-required',
         '--disable-web-security',
       ],
       env: {
         ...process.env,
         PULSE_SINK: sinkName,
+        PULSE_SERVER: 'unix:/tmp/pulse/native',
         PULSE_SOURCE: `${sinkName}.monitor`,
       },
     });
@@ -154,20 +157,78 @@ async function joinZoomMeeting(page, url, meetingId) {
 
 async function waitForMeetingEnd(page, platform, maxMs) {
   const start = Date.now();
-  while (Date.now() - start < maxMs) {
-    await page.waitForTimeout(15000);
+  const MAX_DURATION_MS = 2 * 60 * 60 * 1000; // hard cap: 2 hours
+  const SILENCE_LIMIT  = 10; // leave after 10 consecutive silent chunks (~5 min)
+  let silentChunks = 0;
+
+  console.log('   ⏳ Waiting for meeting to start...');
+  await page.waitForTimeout(30000); // always wait min 30s
+
+  console.log('   👂 Monitoring meeting...');
+  while (Date.now() - start < Math.min(maxMs, MAX_DURATION_MS)) {
+    await page.waitForTimeout(20000);
+
     try {
-      if (platform === 'meet' && (
-        page.url().includes('lookingForSomething') ||
-        page.url() === 'about:blank'
-      )) break;
-      if (platform === 'teams' && (
-        page.url().includes('thank-you') ||
-        page.url().includes('end')
-      )) break;
-      if (platform === 'zoom' && page.url().includes('postattendee')) break;
-    } catch { break; }
+      const url = page.url();
+
+      // ── Google Meet end signals ──────────────────────────
+      if (platform === 'meet') {
+        if (url.includes('lookingForSomething')) {
+          console.log('   🔚 Meet: redirected away — ending');
+          break;
+        }
+        const bodyText = await page.evaluate(() =>
+          document.body?.innerText || ''
+        ).catch(() => '');
+
+        if (
+          bodyText.includes("You've left") ||
+          bodyText.includes("meeting has ended") ||
+          bodyText.includes("call has ended") ||
+          bodyText.includes("This call has ended") ||
+          bodyText.includes("Return to home screen")
+        ) {
+          console.log('   🔚 Meet: end message detected — leaving');
+          break;
+        }
+
+        // Check participant count — if only 1 (us) for 3 checks, leave
+        const participantCount = await page.evaluate(() => {
+          const els = document.querySelectorAll('[data-participant-id], [data-requested-participant-id]');
+          return els.length;
+        }).catch(() => -1);
+
+        if (participantCount === 1) {
+          silentChunks++;
+          console.log(`   👤 Only bot in meeting (${silentChunks}/${SILENCE_LIMIT})`);
+          if (silentChunks >= SILENCE_LIMIT) {
+            console.log('   🔚 Everyone left — bot leaving');
+            break;
+          }
+        } else {
+          silentChunks = 0; // reset if others are present
+        }
+      }
+
+      // ── Teams end signals ────────────────────────────────
+      if (platform === 'teams') {
+        if (url.includes('thank-you') || url.includes('/end')) break;
+        const ended = await page.$('div:has-text("The meeting has ended")').catch(() => null);
+        if (ended) break;
+      }
+
+      // ── Zoom end signals ─────────────────────────────────
+      if (platform === 'zoom') {
+        if (url.includes('postattendee') || url.includes('leavewebinar')) break;
+      }
+
+    } catch {
+      console.log('   🔚 Page closed — bot leaving');
+      break;
+    }
   }
+
+  console.log(`   ⏱️  Bot was in meeting for ${Math.round((Date.now()-start)/60000)} minutes`);
 }
 
 async function processMeetingResults(meeting, transcript) {
